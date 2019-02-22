@@ -284,14 +284,14 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
 
 const mainFilter = document.querySelector(`.main__filter`);
 const boardTasks = document.querySelector(`.board__tasks`);
-
+const testData = 7;
 const collectionFilter = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
 
 for (let i = 0; i < collectionFilter.length; i++) {
   mainFilter.insertAdjacentHTML(`beforeend`, getFilter(collectionFilter[i], rand()));
 }
 
-for (let i = 0; i < 7; i++) {
+for (let i = 0; i < testData; i++) {
   boardTasks.insertAdjacentHTML(`beforeend`, getCard());
 }
 
