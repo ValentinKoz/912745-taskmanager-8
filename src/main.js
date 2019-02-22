@@ -1,18 +1,19 @@
-const getFilter = function(caption,amount = 0, isChecked = false){
-	return `
+'use strict';
+const getFilter = function (caption, amount = 0, isChecked = false) {
+  return `
 		<input
           type="radio"
           id="filter__${caption.toLowerCase()}"
           class="filter__input visually-hidden"
-          name="filter"
-          ${isChecked ? " checked" : ""}
+          name='filter'
+          ${isChecked ? ` checked` : ``}
         />
 		<label for="filter__${caption.toLowerCase()}" class="filter__label">${caption}
-		<span class="filter__${caption.toLowerCase()}-count">${amount}</span></label>`
-}
+		<span class="filter__${caption.toLowerCase()}-count">${amount}</span></label>`;
+};
 
-const getCard = function(tagCard = "tag",timeCard= "11:11",dateCard = "10.10.10", textCard = ""){
-	return `
+const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10.10`, textCard = ``) {
+  return `
 		<article class="card card--blue">
             <form class="card__form" method="get">
               <div class="card__inner">
@@ -273,31 +274,29 @@ const getCard = function(tagCard = "tag",timeCard= "11:11",dateCard = "10.10.10"
               </div>
             </form>
           </article>
-		`
-}
+		`;
+};
 
 const mainFilter = document.querySelector(`.main__filter`);
 const boardTasks = document.querySelector(`.board__tasks`);
 
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`All`,3,true));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Overdue`,2));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Today`,1));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Favorites`,1));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Repeating`,2));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Tags`,5));
-mainFilter.insertAdjacentHTML(`beforeend`,getFilter(`Archive`,3));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`All`, 3, true));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Overdue`, 2));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Today`, 1));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Favorites`, 1));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Repeating`, 2));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Tags`, 5));
+mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Archive`, 3));
 
-console.log(mainFilter);
-
-for(let i = 0; i < 7; i++){
-	boardTasks.insertAdjacentHTML(`beforeend`,getCard());
+for (let i = 0; i < 7; i++) {
+  boardTasks.insertAdjacentHTML(`beforeend`, getCard());
 }
 
-mainFilter.addEventListener(`click`, function(e){
-	if(e.target.tagName == `INPUT`){
-		boardTasks.innerText ='';
-		for(let i = 0; i < Math.floor(Math.random()*(8 - 1) + 1); i++){
-			boardTasks.insertAdjacentHTML(`beforeend`,getCard());
-		}
-	}
+mainFilter.addEventListener(`click`, function (e) {
+  if (e.target.tagName === `INPUT`) {
+    boardTasks.innerText = ``;
+    for (let i = 0; i < Math.floor(Math.random() * (8 - 1) + 1); i++) {
+      boardTasks.insertAdjacentHTML(`beforeend`, getCard());
+    }
+  }
 });
