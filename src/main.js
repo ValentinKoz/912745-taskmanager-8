@@ -12,6 +12,11 @@ const getFilter = function (caption, amount = 0, isChecked = false) {
 		<span class="filter__${caption.toLowerCase()}-count">${amount}</span></label>`;
 };
 
+function rand(max = 6, min = 1) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+
 const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10.10`, textCard = ``) {
   return `
 		<article class="card card--blue">
@@ -280,22 +285,21 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
 const mainFilter = document.querySelector(`.main__filter`);
 const boardTasks = document.querySelector(`.board__tasks`);
 
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`All`, 3, true));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Overdue`, 2));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Today`, 1));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Favorites`, 1));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Repeating`, 2));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Tags`, 5));
-mainFilter.insertAdjacentHTML(`beforeend`, getFilter(`Archive`, 3));
+const collectionFilter = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
+
+for (let i = 0; i < collectionFilter.length; i++) {
+  mainFilter.insertAdjacentHTML(`beforeend`, getFilter(collectionFilter[i], rand()));
+}
 
 for (let i = 0; i < 7; i++) {
   boardTasks.insertAdjacentHTML(`beforeend`, getCard());
 }
 
-mainFilter.addEventListener(`click`, function (e) {
-  if (e.target.tagName === `INPUT`) {
+mainFilter.addEventListener(`click`, function (evt) {
+  if (evt.target.tagName === `INPUT`) {
     boardTasks.innerText = ``;
-    for (let i = 0; i < Math.floor(Math.random() * (8 - 1) + 1); i++) {
+    const cardCount = rand();
+    for (let i = 0; i < cardCount; i++) {
       boardTasks.insertAdjacentHTML(`beforeend`, getCard());
     }
   }
