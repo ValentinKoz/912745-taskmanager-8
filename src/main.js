@@ -1,23 +1,25 @@
 'use strict';
-const getFilter = function (caption, amount = 0, isChecked = false) {
+const TEST_DATA = 7;
+let getFilter = (caption, amount = 0, isChecked = false) => {
+  const lowerCaption = caption.toLowerCase();
   return `
 		<input
           type="radio"
-          id="filter__${caption.toLowerCase()}"
+          id="filter__${lowerCaption}"
           class="filter__input visually-hidden"
           name='filter'
           ${isChecked ? ` checked` : ``}
         />
-		<label for="filter__${caption.toLowerCase()}" class="filter__label">${caption}
-		<span class="filter__${caption.toLowerCase()}-count">${amount}</span></label>`;
+		<label for="filter__${lowerCaption}" class="filter__label">${caption}
+		<span class="filter__${lowerCaption}-count">${amount}</span></label>`;
 };
 
-function rand(max = 6, min = 1) {
+let rand = (max = 6, min = 1) => {
   return Math.floor(Math.random() * (max - min) + min);
-}
+};
 
 
-const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10.10`, textCard = ``) {
+let getCard = (tag, time, date, text) => {
   return `
 		<article class="card card--blue">
             <form class="card__form" method="get">
@@ -49,7 +51,7 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${textCard}</textarea>
+                    >${text}</textarea>
                   </label>
                 </div>
 
@@ -65,7 +67,7 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
                           <input
                             class="card__date"
                             type="text"
-                            placeholder="${dateCard}"
+                            placeholder="${date}"
                             name="date"
                           />
                         </label>
@@ -73,7 +75,7 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
                           <input
                             class="card__time"
                             type="text"
-                            placeholder="${timeCard}"
+                            placeholder="${time}"
                             name="time"
                           />
                         </label>
@@ -172,7 +174,7 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
                             class="card__hashtag-hidden-input"
                           />
                           <button type="button" class="card__hashtag-name">
-                            ${tagCard}
+                            ${tag}
                           </button>
                           <button type="button" class="card__hashtag-delete">
                             delete
@@ -284,18 +286,21 @@ const getCard = function (tagCard = `tag`, timeCard = `11:11`, dateCard = `10.10
 
 const mainFilter = document.querySelector(`.main__filter`);
 const boardTasks = document.querySelector(`.board__tasks`);
-const testData = 7;
-const collectionFilter = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
+const Filters = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
+let conteinerFilters = [];
 
-for (let i = 0; i < collectionFilter.length; i++) {
-  mainFilter.insertAdjacentHTML(`beforeend`, getFilter(collectionFilter[i], rand()));
+for (let i = 0; i < Filters.length; i++) {
+  conteinerFilters.push(getFilter(Filters[i], rand()));
 }
 
-for (let i = 0; i < testData; i++) {
+conteinerFilters = conteinerFilters.join(` `);
+mainFilter.insertAdjacentHTML(`beforeend`, conteinerFilters);
+
+for (let i = 0; i < TEST_DATA; i++) {
   boardTasks.insertAdjacentHTML(`beforeend`, getCard());
 }
 
-mainFilter.addEventListener(`click`, function (evt) {
+mainFilter.addEventListener(`change`, function (evt) {
   if (evt.target.tagName === `INPUT`) {
     boardTasks.innerText = ``;
     const cardCount = rand();
