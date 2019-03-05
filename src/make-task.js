@@ -1,39 +1,10 @@
-import info from './info.js';
+import importModule from './info.js';
 
 let getCard = (task) => {
-  const repDays = [];
-  for (const day of task.repeatingDays) {
-    if (day[1]) {
-      repDays.push(day[0].toLowerCase());
-    }
-  }
-  const QUTY_TAGS = info.rand(4, 0);
-  const setFromArray = Array.from(task.tags);
-  const tagsForCard = new Set([]);
 
-  while (tagsForCard.size < QUTY_TAGS) {
-    const randomTag = setFromArray[info.rand(7, 0)];
-    tagsForCard.add(randomTag);
-  }
-  const tagsMarkDown = [...tagsForCard].map((it) => `<string>#${it}</string>`).join(` `);
-
-
-  const dateTime = task.dueDate.toLocaleString(`en-US`, {
-    era: `long`,
-    year: `numeric`,
-    month: `long`,
-    day: `numeric`,
-    weekday: `long`,
-    timezone: `UTC`,
-    hour: `numeric`,
-    minute: `numeric`,
-    second: `numeric`
-  }).split(`,`);
-
-  const date = dateTime[1].trim();
-  let time = dateTime[3].trim().split(` `);
-  time[0] = time[0].split(`:`, 2).join(`:`);
-  time = time.join(` `);
+  const tags = importModule.getRandomTags(task);
+  const dateAndTime = importModule.getDateAndTime(task);
+  const repDays = importModule.checkRepeatDays(task);
 
   return `
 		<article class="card card--${task.color} ${repDays.lenght !== 0 ? `card--repeat` : ``} ${task.isFavorite ? `card--favorite` : ``} ${task.isDone ? `card--done` : ``}">
@@ -80,7 +51,7 @@ let getCard = (task) => {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${date}"
+                            value="${dateAndTime[0]}"
                           />
                         </label>
                         <label class="card__input-deadline-wrap">
@@ -89,7 +60,7 @@ let getCard = (task) => {
                             type="text"
                             placeholder=""
                             name="time"
-                            value="${time}"
+                            value="${dateAndTime[1]}"
                           />
                         </label>
                       </fieldset>
@@ -188,7 +159,7 @@ let getCard = (task) => {
                             class="card__hashtag-hidden-input"
                           />
                           <button type="button" class="card__hashtag-name">
-                            ${tagsMarkDown}
+                            ${tags}
                           </button>
                           <button type="button" class="card__hashtag-delete">
                             delete
