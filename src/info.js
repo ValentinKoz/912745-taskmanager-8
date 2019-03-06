@@ -5,9 +5,9 @@ const rand = (max = 6, min = 1) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-const addingCards = (info, getCard, task, conteinerCards, boardTasks) => {
+const addingCards = (info, makeTask, getTask, conteinerCards, boardTasks) => {
   for (let i = 0; i < info.TEST_DATA; i++) {
-    conteinerCards.push(getCard(task()));
+    conteinerCards.push(makeTask(getTask()));
   }
   conteinerCards = conteinerCards.join(` `);
   boardTasks.insertAdjacentHTML(`beforeend`, conteinerCards);
