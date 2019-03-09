@@ -1,24 +1,25 @@
-const TEST_DATA = 7;
-const Filters = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
+export const TEST_DATA = 7;
+export const Filters = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
 
-const rand = (max = 6, min = 1) => {
+export const rand = (max = 6, min = 1) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-const addingCards = (info, makeTask, getTask, conteinerCards, boardTasks) => {
-  for (let i = 0; i < info.TEST_DATA; i++) {
+export const addingCards = (makeTask, getTask, boardTasks) => {
+  let conteinerCards = [];
+  for (let i = 0; i < TEST_DATA; i++) {
     conteinerCards.push(makeTask(getTask()));
   }
   conteinerCards = conteinerCards.join(` `);
   boardTasks.insertAdjacentHTML(`beforeend`, conteinerCards);
 };
 
-const getDateAndTime = (task) => {
-  const dateTime = task.dueDate.toString().split(` `);
+export const getDateAndTime = (Task) => {
+  const dateTime = Task.dueDate.toString().split(` `);
   const date = dateTime[2] + ` ` + dateTime[1];
 
-  let getHour = task.dueDate.getHours();
-  let getMinutes = task.dueDate.getMinutes();
+  let getHour = Task.dueDate.getHours();
+  let getMinutes = Task.dueDate.getMinutes();
   getMinutes = (getMinutes > 10) ? getMinutes : `0` + getMinutes;
   const format = (getHour >= 12) ? `PM` : `AM`;
   getHour = (getHour >= 12) ? getHour - 12 : getHour;
@@ -26,9 +27,9 @@ const getDateAndTime = (task) => {
   return [date, time];
 };
 
-const checkRepeatDays = (task) => {
+export const checkRepeatDays = (Task) => {
   const repDays = [];
-  for (const day of task.repeatingDays) {
+  for (const day of Task.repeatingDays) {
     if (day[1]) {
       repDays.push(day[0].toLowerCase());
     }
@@ -36,24 +37,13 @@ const checkRepeatDays = (task) => {
   return repDays;
 };
 
-const getRandomTags = (task) => {
-  const QUTY_TAGS = rand(4, 0);
-  const setFromArray = Array.from(task.tags);
-  const tagsForCard = new Set([]);
+export const getRandomTags = (Task) => {
+  const qutyTegs = rand(4, 0);
+  const mas = [...Task.tags];
 
-  while (tagsForCard.size < QUTY_TAGS) {
-    const randomTag = setFromArray[rand(7, 0)];
-    tagsForCard.add(randomTag);
+  while(mas.length !== qutyTegs){
+    const index = rand(mas.length, 0);
+    mas.splice(index ,1);
   }
-  return [...tagsForCard].map((it) => `<string>#${it}</string>`).join(` `);
-};
-
-export default {
-  getRandomTags,
-  checkRepeatDays,
-  getDateAndTime,
-  TEST_DATA,
-  rand,
-  Filters,
-  addingCards,
+  return mas.map((it) => `<string>#${it}</string>`).join(` `);
 };

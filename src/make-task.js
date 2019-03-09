@@ -1,13 +1,13 @@
-import importModule from './info.js';
+import {getRandomTags, getDateAndTime, checkRepeatDays} from './info.js';
 
-let getCard = (task) => {
+let getCard = (Task) => {
 
-  const tags = importModule.getRandomTags(task);
-  const dateAndTime = importModule.getDateAndTime(task);
-  const repDays = importModule.checkRepeatDays(task);
+  const tags = getRandomTags(Task);
+  const dateAndTime = getDateAndTime(Task);
+  const repDays = checkRepeatDays(Task);
 
   return `
-		<article class="card card--${task.color} ${repDays.lenght !== 0 ? `card--repeat` : ``} ${task.isFavorite ? `card--favorite` : ``} ${task.isDone ? `card--done` : ``}">
+		<article class="card card--${Task.color} ${repDays.lenght !== 0 ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -35,7 +35,7 @@ let getCard = (task) => {
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${task.title}</textarea>
+                    >${Task.title}</textarea>
                   </label>
                 </div>
                 <div class="card__settings">
@@ -183,7 +183,7 @@ let getCard = (task) => {
                       name="img"
                     />
                     <img
-                      src="${task.picture}"
+                      src="${Task.picture}"
                       alt="task picture"
                       class="card__img"
                     />
@@ -197,7 +197,7 @@ let getCard = (task) => {
                         class="card__color-input card__color-input--black visually-hidden"
                         name="color"
                         value="black"
-                        ${task.color === `black` ? `checked` : ``}
+                        ${Task.color === `black` ? `checked` : ``}
                       />
                       <label
                         for="color-black-5"
@@ -210,7 +210,7 @@ let getCard = (task) => {
                         class="card__color-input card__color-input--yellow visually-hidden"
                         name="color"
                         value="yellow"
-                        ${task.color === `yellow` ? `checked` : ``}
+                        ${Task.color === `yellow` ? `checked` : ``}
                       />
                       <label
                         for="color-yellow-5"
@@ -223,7 +223,7 @@ let getCard = (task) => {
                         class="card__color-input card__color-input--blue visually-hidden"
                         name="color"
                         value="blue"
-                        ${task.color === `blue` ? `checked` : ``}
+                        ${Task.color === `blue` ? `checked` : ``}
                       />
                       <label
                         for="color-blue-5"
@@ -236,7 +236,7 @@ let getCard = (task) => {
                         class="card__color-input card__color-input--green visually-hidden"
                         name="color"
                         value="green"
-                        ${task.color === `green` ? `checked` : ``}
+                        ${Task.color === `green` ? `checked` : ``}
                       />
                       <label
                         for="color-green-5"
@@ -249,7 +249,7 @@ let getCard = (task) => {
                         class="card__color-input card__color-input--pink visually-hidden"
                         name="color"
                         value="pink"
-                        ${task.color === `pink` ? `checked` : ``}
+                        ${Task.color === `pink` ? `checked` : ``}
                       />
                       <label
                         for="color-pink-5"

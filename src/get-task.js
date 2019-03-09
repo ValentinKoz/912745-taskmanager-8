@@ -1,4 +1,4 @@
-const task = () => ({
+const Task = () => ({
   title: [
     `Изучить теорию`,
     `Сделать домашку`,
@@ -29,4 +29,4 @@ const task = () => ({
   isDone: Math.random(),
 });
 
-export default task;
+export default Task;
