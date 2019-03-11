@@ -1,4 +1,5 @@
 let getFilter = (caption, amount = 0, isChecked = false) => {
+
   const lowerCaption = caption.toLowerCase();
   return `
 		<input

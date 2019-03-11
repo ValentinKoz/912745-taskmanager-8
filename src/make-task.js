@@ -1,6 +1,13 @@
-let getCard = (tag, time, date, text) => {
+import {getRandomTags, getDateAndTime, checkRepeatDays} from './info.js';
+
+let getCard = (Task) => {
+
+  const tags = getRandomTags(Task);
+  const dateAndTime = getDateAndTime(Task);
+  const repDays = checkRepeatDays(Task);
+
   return `
-		<article class="card card--blue">
+		<article class="card card--${Task.color} ${repDays.lenght !== 0 ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -28,7 +35,7 @@ let getCard = (tag, time, date, text) => {
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${text}</textarea>
+                    >${Task.title}</textarea>
                   </label>
                 </div>
                 <div class="card__settings">
@@ -37,21 +44,23 @@ let getCard = (tag, time, date, text) => {
                       <button class="card__date-deadline-toggle" type="button">
                         date: <span class="card__date-status">no</span>
                       </button>
-                      <fieldset class="card__date-deadline" disabled>
+                      <fieldset class="card__date-deadline">
                         <label class="card__input-deadline-wrap">
                           <input
                             class="card__date"
                             type="text"
-                            placeholder="${date}"
+                            placeholder=""
                             name="date"
+                            value="${dateAndTime[0]}"
                           />
                         </label>
                         <label class="card__input-deadline-wrap">
                           <input
                             class="card__time"
                             type="text"
-                            placeholder="${time}"
+                            placeholder=""
                             name="time"
+                            value="${dateAndTime[1]}"
                           />
                         </label>
                       </fieldset>
@@ -66,6 +75,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-mo-5"
                             name="repeat"
                             value="mo"
+                            ${repDays.indexOf(`mo`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-mo-5"
                             >mo</label
@@ -76,7 +86,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-tu-5"
                             name="repeat"
                             value="tu"
-                            checked
+                              ${repDays.indexOf(`tu`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-tu-5"
                             >tu</label
@@ -87,6 +97,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-we-5"
                             name="repeat"
                             value="we"
+                            ${repDays.indexOf(`we`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-we-5"
                             >we</label
@@ -97,6 +108,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-th-5"
                             name="repeat"
                             value="th"
+                            ${repDays.indexOf(`th`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-th-5"
                             >th</label
@@ -107,7 +119,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-fr-5"
                             name="repeat"
                             value="fr"
-                            checked
+                            ${repDays.indexOf(`fr`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-fr-5"
                             >fr</label
@@ -118,6 +130,7 @@ let getCard = (tag, time, date, text) => {
                             name="repeat"
                             value="sa"
                             id="repeat-sa-5"
+                            ${repDays.indexOf(`sa`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-sa-5"
                             >sa</label
@@ -128,7 +141,7 @@ let getCard = (tag, time, date, text) => {
                             id="repeat-su-5"
                             name="repeat"
                             value="su"
-                            checked
+                            ${repDays.indexOf(`su`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-su-5"
                             >su</label
@@ -146,7 +159,7 @@ let getCard = (tag, time, date, text) => {
                             class="card__hashtag-hidden-input"
                           />
                           <button type="button" class="card__hashtag-name">
-                            ${tag}
+                            ${tags}
                           </button>
                           <button type="button" class="card__hashtag-delete">
                             delete
@@ -163,14 +176,14 @@ let getCard = (tag, time, date, text) => {
                       </label>
                     </div>
                   </div>
-                  <label class="card__img-wrap card__img-wrap--empty">
+                  <label class="card__img-wrap ">
                     <input
                       type="file"
                       class="card__img-input visually-hidden"
                       name="img"
                     />
                     <img
-                      src=""
+                      src="${Task.picture}"
                       alt="task picture"
                       class="card__img"
                     />
@@ -184,6 +197,7 @@ let getCard = (tag, time, date, text) => {
                         class="card__color-input card__color-input--black visually-hidden"
                         name="color"
                         value="black"
+                        ${Task.color === `black` ? `checked` : ``}
                       />
                       <label
                         for="color-black-5"
@@ -196,6 +210,7 @@ let getCard = (tag, time, date, text) => {
                         class="card__color-input card__color-input--yellow visually-hidden"
                         name="color"
                         value="yellow"
+                        ${Task.color === `yellow` ? `checked` : ``}
                       />
                       <label
                         for="color-yellow-5"
@@ -208,6 +223,7 @@ let getCard = (tag, time, date, text) => {
                         class="card__color-input card__color-input--blue visually-hidden"
                         name="color"
                         value="blue"
+                        ${Task.color === `blue` ? `checked` : ``}
                       />
                       <label
                         for="color-blue-5"
@@ -220,7 +236,7 @@ let getCard = (tag, time, date, text) => {
                         class="card__color-input card__color-input--green visually-hidden"
                         name="color"
                         value="green"
-                        checked
+                        ${Task.color === `green` ? `checked` : ``}
                       />
                       <label
                         for="color-green-5"
@@ -233,6 +249,7 @@ let getCard = (tag, time, date, text) => {
                         class="card__color-input card__color-input--pink visually-hidden"
                         name="color"
                         value="pink"
+                        ${Task.color === `pink` ? `checked` : ``}
                       />
                       <label
                         for="color-pink-5"
