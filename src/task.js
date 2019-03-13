@@ -1,8 +1,7 @@
 import {getDateAndTime, getRandomTags, checkRepeatDays} from './info.js';
-import {createElement} from './create-element.js';
 import Component from './component.js';
 
-class Task extends Component{
+class Task extends Component {
   constructor(data) {
     super();
     this._title = data.title;
@@ -124,8 +123,8 @@ class Task extends Component{
   }
 
   set onEdit(fn) {
-      this._onEdit = fn;
-    }
+    this._onEdit = fn;
+  }
 
   bind() {
     this._element

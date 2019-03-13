@@ -1,7 +1,6 @@
-import {createElement} from './create-element.js';
 import Component from './component.js';
 
-class TaskEdit extends Component{
+class TaskEdit extends Component {
   constructor(Task) {
     super();
     this._propertiesOfTask = Task;
