@@ -1,9 +1,12 @@
 import {createElement} from './create-element.js';
-class TaskEdit {
+import Component from './component.js';
+
+class TaskEdit extends Component{
   constructor(Task) {
+    super();
     this._propertiesOfTask = Task;
 
-    this._element = null;
+    this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onSubmit = null;
   }
 
@@ -154,23 +157,13 @@ class TaskEdit {
   }
 
   bind() {
-    this._element.addEventListener(`click`, this._onSubmitButtonClick.bind(this));
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
+    this._element.addEventListener(`click`, this._onSubmitButtonClick);
   }
 
   unbind() {
-    this._element.removeEventListener(`click`, this._onSubmitButtonClick.bind(this));
+    this._element.removeEventListener(`click`, this._onSubmitButtonClick);
   }
 
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
 }
 
 export default TaskEdit;
