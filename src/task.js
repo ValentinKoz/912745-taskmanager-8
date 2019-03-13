@@ -1,13 +1,40 @@
-import {getRandomTags, getDateAndTime, checkRepeatDays} from './info.js';
+import {getDateAndTime, getRandomTags, checkRepeatDays} from './info.js';
+import {createElement} from './create-element.js';
 
-let getCard = (Task) => {
+class Task {
+  constructor(data) {
+    this._title = data.title;
+    this._dueDate = getDateAndTime(data.dueDate);
+    this._tags = getRandomTags(data.tags);
+    this._picture = data.picture;
+    this._color = data.color;
+    this._repeatingDays = checkRepeatDays(data.repeatingDays);
 
-  const tags = getRandomTags(Task);
-  const dateAndTime = getDateAndTime(Task);
-  const repDays = checkRepeatDays(Task);
+    this._element = null;
+    this._state = {
+    };
+    this._onEdit = null;
+  }
 
-  return `
-		<article class="card card--${Task.color} ${repDays.lenght !== 0 ? `card--repeat` : ``}">
+  _onEditButtonClick(evt) {
+    if (evt.target.classList.contains(`card__btn--edit`)) {
+      if (typeof this._onEdit === `function`) {
+        this._onEdit();
+      }
+    }
+  }
+
+  get element() {
+    return this._element;
+  }
+
+  set onEdit(fn) {
+    this._onEdit = fn;
+  }
+
+  get template() {
+    return `
+      <article class="card card--${this._color} ${this._repeatingDays.lenght !== 0 ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -35,7 +62,7 @@ let getCard = (Task) => {
                       class="card__text"
                       placeholder="Start typing your text here..."
                       name="text"
-                    >${Task.title}</textarea>
+                    >${this._title}</textarea>
                   </label>
                 </div>
                 <div class="card__settings">
@@ -51,7 +78,7 @@ let getCard = (Task) => {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${dateAndTime[0]}"
+                            value="${this._dueDate[0]}"
                           />
                         </label>
                         <label class="card__input-deadline-wrap">
@@ -60,7 +87,7 @@ let getCard = (Task) => {
                             type="text"
                             placeholder=""
                             name="time"
-                            value="${dateAndTime[1]}"
+                            value="${this._dueDate[1]}"
                           />
                         </label>
                       </fieldset>
@@ -75,7 +102,7 @@ let getCard = (Task) => {
                             id="repeat-mo-5"
                             name="repeat"
                             value="mo"
-                            ${repDays.indexOf(`mo`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`mo`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-mo-5"
                             >mo</label
@@ -86,7 +113,7 @@ let getCard = (Task) => {
                             id="repeat-tu-5"
                             name="repeat"
                             value="tu"
-                              ${repDays.indexOf(`tu`) !== -1 ? `checked` : ``}
+                              ${this._repeatingDays.indexOf(`tu`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-tu-5"
                             >tu</label
@@ -97,7 +124,7 @@ let getCard = (Task) => {
                             id="repeat-we-5"
                             name="repeat"
                             value="we"
-                            ${repDays.indexOf(`we`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`we`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-we-5"
                             >we</label
@@ -108,7 +135,7 @@ let getCard = (Task) => {
                             id="repeat-th-5"
                             name="repeat"
                             value="th"
-                            ${repDays.indexOf(`th`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`th`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-th-5"
                             >th</label
@@ -119,7 +146,7 @@ let getCard = (Task) => {
                             id="repeat-fr-5"
                             name="repeat"
                             value="fr"
-                            ${repDays.indexOf(`fr`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`fr`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-fr-5"
                             >fr</label
@@ -130,7 +157,7 @@ let getCard = (Task) => {
                             name="repeat"
                             value="sa"
                             id="repeat-sa-5"
-                            ${repDays.indexOf(`sa`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`sa`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-sa-5"
                             >sa</label
@@ -141,7 +168,7 @@ let getCard = (Task) => {
                             id="repeat-su-5"
                             name="repeat"
                             value="su"
-                            ${repDays.indexOf(`su`) !== -1 ? `checked` : ``}
+                            ${this._repeatingDays.indexOf(`su`) !== -1 ? `checked` : ``}
                           />
                           <label class="card__repeat-day" for="repeat-su-5"
                             >su</label
@@ -151,20 +178,21 @@ let getCard = (Task) => {
                     </div>
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
+                      ${this._tags.map((tag) => (`
                         <span class="card__hashtag-inner">
                           <input
                             type="hidden"
                             name="hashtag"
-                            value="repeat"
+                            value="${tag}"
                             class="card__hashtag-hidden-input"
                           />
                           <button type="button" class="card__hashtag-name">
-                            ${tags}
+                            #${tag}
                           </button>
                           <button type="button" class="card__hashtag-delete">
                             delete
                           </button>
-                        </span>
+                        </span>`.trim())).join(``)}
                       </div>
                       <label>
                         <input
@@ -183,7 +211,7 @@ let getCard = (Task) => {
                       name="img"
                     />
                     <img
-                      src="${Task.picture}"
+                      src="${this._picture}"
                       alt="task picture"
                       class="card__img"
                     />
@@ -197,7 +225,7 @@ let getCard = (Task) => {
                         class="card__color-input card__color-input--black visually-hidden"
                         name="color"
                         value="black"
-                        ${Task.color === `black` ? `checked` : ``}
+                        ${this._color === `black` ? `checked` : ``}
                       />
                       <label
                         for="color-black-5"
@@ -210,7 +238,7 @@ let getCard = (Task) => {
                         class="card__color-input card__color-input--yellow visually-hidden"
                         name="color"
                         value="yellow"
-                        ${Task.color === `yellow` ? `checked` : ``}
+                        ${this._color === `yellow` ? `checked` : ``}
                       />
                       <label
                         for="color-yellow-5"
@@ -223,7 +251,7 @@ let getCard = (Task) => {
                         class="card__color-input card__color-input--blue visually-hidden"
                         name="color"
                         value="blue"
-                        ${Task.color === `blue` ? `checked` : ``}
+                        ${this._color === `blue` ? `checked` : ``}
                       />
                       <label
                         for="color-blue-5"
@@ -236,7 +264,7 @@ let getCard = (Task) => {
                         class="card__color-input card__color-input--green visually-hidden"
                         name="color"
                         value="green"
-                        ${Task.color === `green` ? `checked` : ``}
+                        ${this._color === `green` ? `checked` : ``}
                       />
                       <label
                         for="color-green-5"
@@ -249,7 +277,7 @@ let getCard = (Task) => {
                         class="card__color-input card__color-input--pink visually-hidden"
                         name="color"
                         value="pink"
-                        ${Task.color === `pink` ? `checked` : ``}
+                        ${this._color === `pink` ? `checked` : ``}
                       />
                       <label
                         for="color-pink-5"
@@ -266,7 +294,28 @@ let getCard = (Task) => {
               </div>
             </form>
           </article>
-		`;
-};
+      `.trim();
+  }
+  bind() {
+    this._element
+          .addEventListener(`click`, this._onEditButtonClick.bind(this));
+  }
 
-export default getCard;
+  render() {
+    this._element = createElement(this.template);
+    this.bind();
+    return this._element;
+  }
+
+  unbind() {
+    this._element
+    .removeEventListener(`click`, this._onEditButtonClick.bind(this));
+  }
+
+  unrender() {
+    this.unbind();
+    this._element = null;
+  }
+}
+
+export default Task;
