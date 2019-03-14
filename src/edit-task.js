@@ -22,10 +22,6 @@ class TaskEdit extends Component {
     this._onSubmit = fn;
   }
 
-  get element() {
-    return this._element;
-  }
-
   get template() {
     return `
     <article class="card card--edit card--blue ${this._propertiesOfTask._repeatingDays.lenght !== 0 ? `card--repeat` : ``}">
