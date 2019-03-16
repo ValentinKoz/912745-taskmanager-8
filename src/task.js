@@ -1,8 +1,9 @@
 import {getDateAndTime, getRandomTags, checkRepeatDays} from './info.js';
-import {createElement} from './create-element.js';
+import Component from './component.js';
 
-class Task {
+class Task extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._dueDate = getDateAndTime(data.dueDate);
     this._tags = getRandomTags(data.tags);
@@ -10,10 +11,8 @@ class Task {
     this._color = data.color;
     this._repeatingDays = checkRepeatDays(data.repeatingDays);
 
-    this._element = null;
-    this._state = {
-    };
     this._onEdit = null;
+    this._onEditButtonClick = this._onEditButtonClick.bind(this);
   }
 
   _onEditButtonClick(evt) {
@@ -22,14 +21,6 @@ class Task {
         this._onEdit();
       }
     }
-  }
-
-  get element() {
-    return this._element;
-  }
-
-  set onEdit(fn) {
-    this._onEdit = fn;
   }
 
   get template() {
@@ -91,90 +82,6 @@ class Task {
                           />
                         </label>
                       </fieldset>
-                      <button class="card__repeat-toggle" type="button">
-                        repeat:<span class="card__repeat-status">no</span>
-                      </button>
-                      <fieldset class="card__repeat-days" disabled>
-                        <div class="card__repeat-days-inner">
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-mo-5"
-                            name="repeat"
-                            value="mo"
-                            ${this._repeatingDays.indexOf(`mo`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-mo-5"
-                            >mo</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-tu-5"
-                            name="repeat"
-                            value="tu"
-                              ${this._repeatingDays.indexOf(`tu`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-tu-5"
-                            >tu</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-we-5"
-                            name="repeat"
-                            value="we"
-                            ${this._repeatingDays.indexOf(`we`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-we-5"
-                            >we</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-th-5"
-                            name="repeat"
-                            value="th"
-                            ${this._repeatingDays.indexOf(`th`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-th-5"
-                            >th</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-fr-5"
-                            name="repeat"
-                            value="fr"
-                            ${this._repeatingDays.indexOf(`fr`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-fr-5"
-                            >fr</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            name="repeat"
-                            value="sa"
-                            id="repeat-sa-5"
-                            ${this._repeatingDays.indexOf(`sa`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-sa-5"
-                            >sa</label
-                          >
-                          <input
-                            class="visually-hidden card__repeat-day-input"
-                            type="checkbox"
-                            id="repeat-su-5"
-                            name="repeat"
-                            value="su"
-                            ${this._repeatingDays.indexOf(`su`) !== -1 ? `checked` : ``}
-                          />
-                          <label class="card__repeat-day" for="repeat-su-5"
-                            >su</label
-                          >
-                        </div>
-                      </fieldset>
                     </div>
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
@@ -194,14 +101,6 @@ class Task {
                           </button>
                         </span>`.trim())).join(``)}
                       </div>
-                      <label>
-                        <input
-                          type="text"
-                          class="card__hashtag-input"
-                          name="hashtag-input"
-                          placeholder="Type new hashtag here"
-                        />
-                      </label>
                     </div>
                   </div>
                   <label class="card__img-wrap ">
@@ -216,105 +115,25 @@ class Task {
                       class="card__img"
                     />
                   </label>
-                  <div class="card__colors-inner">
-                    <h3 class="card__colors-title">Color</h3>
-                    <div class="card__colors-wrap">
-                      <input
-                        type="radio"
-                        id="color-black-5"
-                        class="card__color-input card__color-input--black visually-hidden"
-                        name="color"
-                        value="black"
-                        ${this._color === `black` ? `checked` : ``}
-                      />
-                      <label
-                        for="color-black-5"
-                        class="card__color card__color--black"
-                        >black</label
-                      >
-                      <input
-                        type="radio"
-                        id="color-yellow-5"
-                        class="card__color-input card__color-input--yellow visually-hidden"
-                        name="color"
-                        value="yellow"
-                        ${this._color === `yellow` ? `checked` : ``}
-                      />
-                      <label
-                        for="color-yellow-5"
-                        class="card__color card__color--yellow"
-                        >yellow</label
-                      >
-                      <input
-                        type="radio"
-                        id="color-blue-5"
-                        class="card__color-input card__color-input--blue visually-hidden"
-                        name="color"
-                        value="blue"
-                        ${this._color === `blue` ? `checked` : ``}
-                      />
-                      <label
-                        for="color-blue-5"
-                        class="card__color card__color--blue"
-                        >blue</label
-                      >
-                      <input
-                        type="radio"
-                        id="color-green-5"
-                        class="card__color-input card__color-input--green visually-hidden"
-                        name="color"
-                        value="green"
-                        ${this._color === `green` ? `checked` : ``}
-                      />
-                      <label
-                        for="color-green-5"
-                        class="card__color card__color--green"
-                        >green</label
-                      >
-                      <input
-                        type="radio"
-                        id="color-pink-5"
-                        class="card__color-input card__color-input--pink visually-hidden"
-                        name="color"
-                        value="pink"
-                        ${this._color === `pink` ? `checked` : ``}
-                      />
-                      <label
-                        for="color-pink-5"
-                        class="card__color card__color--pink"
-                        >pink</label
-                      >
-                    </div>
-                  </div>
-                </div>
-                <div class="card__status-btns">
-                  <button class="card__save" type="submit">save</button>
-                  <button class="card__delete" type="button">delete</button>
                 </div>
               </div>
             </form>
           </article>
       `.trim();
   }
-  bind() {
-    this._element
-          .addEventListener(`click`, this._onEditButtonClick.bind(this));
+
+  set onEdit(fn) {
+    this._onEdit = fn;
   }
 
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
+  bind() {
+    this._element
+          .addEventListener(`click`, this._onEditButtonClick);
   }
 
   unbind() {
     this._element
-    .removeEventListener(`click`, this._onEditButtonClick.bind(this));
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
+    .removeEventListener(`click`, this._onEditButtonClick);
   }
 }
 
