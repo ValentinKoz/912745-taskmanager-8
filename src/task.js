@@ -1,15 +1,14 @@
-import {getDateAndTime, getRandomTags, checkRepeatDays} from './info.js';
 import Component from './component.js';
 
 class Task extends Component {
   constructor(data) {
     super();
     this._title = data.title;
-    this._dueDate = getDateAndTime(data.dueDate);
-    this._tags = getRandomTags(data.tags);
+    this._dueDate = data.dueDate;
+    this._tags = data.tags;
     this._picture = data.picture;
     this._color = data.color;
-    this._repeatingDays = checkRepeatDays(data.repeatingDays);
+    this._repeatingDays = data.repeatingDays;
 
     this._onEdit = null;
     this._onEditButtonClick = this._onEditButtonClick.bind(this);
@@ -23,9 +22,13 @@ class Task extends Component {
     }
   }
 
+  _isRepeated() {
+    return Object.values(this._repeatingDays).some((it) => it === true);
+  }
+
   get template() {
     return `
-      <article class="card card--${this._color} ${this._repeatingDays.lenght !== 0 ? `card--repeat` : ``}">
+      <article class="card card--${this._color} ${ this._isRepeated() ? `card--repeat` : ``}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__control">
@@ -134,6 +137,13 @@ class Task extends Component {
   unbind() {
     this._element
     .removeEventListener(`click`, this._onEditButtonClick);
+  }
+
+  update(data) {
+    this._title = data.title;
+    this._tags = data.tags;
+    this._color = data.color;
+    this._repeatingDays = data.repeatingDays;
   }
 }
 
