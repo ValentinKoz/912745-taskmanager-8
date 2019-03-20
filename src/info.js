@@ -15,13 +15,13 @@ export const primaryTaskList = () => {
     createTask();
   }
 };
+const taskContainer = document.querySelector(`.board__tasks`);
 
 export const createTask = () => {
 
   const dataForTask = currentData(data());
   const componentTask = new Task(dataForTask);
   const editComponentTask = new TaskEdit(dataForTask);
-  const taskContainer = document.querySelector(`.board__tasks`);
   taskContainer.appendChild(componentTask.render());
 
   componentTask.onEdit = () => {
@@ -36,6 +36,7 @@ export const createTask = () => {
     dataForTask.color = newObject.color;
     dataForTask.repeatingDays = newObject.repeatingDays;
     dataForTask.dueDate = newObject.dueDate;
+    dataForTask.time = newObject.time;
 
     componentTask.update(dataForTask);
     componentTask.render();
@@ -44,10 +45,10 @@ export const createTask = () => {
   };
 };
 
-export const getDateAndTime = (dateAndTime) => {
+export const getDateAndTime = (param) => {
+  const dateAndTime = param;
   const dateTime = dateAndTime.toString().split(` `);
   const date = dateTime[2] + ` ` + dateTime[1];
-
   let getHour = dateAndTime.getHours();
   let getMinutes = dateAndTime.getMinutes();
   getMinutes = (getMinutes > 10) ? getMinutes : `0` + getMinutes;
@@ -56,16 +57,6 @@ export const getDateAndTime = (dateAndTime) => {
   const time = getHour + `:` + getMinutes + ` ` + format;
   return [date, time];
 };
-
-// export const checkRepeatDays = (repeatingDays) => {
-//   const repDays = [];
-//   for (const day of repeatingDays) {
-//     if (day[1]) {
-//       repDays.push(day[0].toLowerCase());
-//     }
-//   }
-//   return repDays;
-// };
 
 export const getRandomTags = (tags) => {
   const qutyTegs = rand(4, 0);

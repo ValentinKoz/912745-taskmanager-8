@@ -5,6 +5,7 @@ class Task extends Component {
     super();
     this._title = data.title;
     this._dueDate = data.dueDate;
+    this._time = data.time;
     this._tags = data.tags;
     this._picture = data.picture;
     this._color = data.color;
@@ -72,7 +73,7 @@ class Task extends Component {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${this._dueDate[0]}"
+                            value="${this._dueDate}"
                           />
                         </label>
                         <label class="card__input-deadline-wrap">
@@ -81,7 +82,7 @@ class Task extends Component {
                             type="text"
                             placeholder=""
                             name="time"
-                            value="${this._dueDate[1]}"
+                            value="${this._time}"
                           />
                         </label>
                       </fieldset>
@@ -140,6 +141,8 @@ class Task extends Component {
   }
 
   update(data) {
+    this._time = data.time;
+    this._dueDate = data.dueDate;
     this._title = data.title;
     this._tags = data.tags;
     this._color = data.color;

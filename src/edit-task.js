@@ -1,5 +1,6 @@
 import Component from './component.js';
 import flatpickr from "flatpickr";
+import {createElement} from './create-element.js';
 
 class TaskEdit extends Component {
   constructor(data) {
@@ -9,6 +10,7 @@ class TaskEdit extends Component {
     this._dueDate = data.dueDate;
     this._tags = data.tags;
     this._color = data.color;
+    this._time = data.time;
 
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onSubmit = null;
@@ -26,7 +28,8 @@ class TaskEdit extends Component {
       title: ``,
       color: ``,
       tags: [],
-      dueDate: new Date(),
+      dueDate: this._dueDate,
+      time: ``,
       repeatingDays: {
         'mo': false,
         'tu': false,
@@ -37,8 +40,8 @@ class TaskEdit extends Component {
         'su': false,
       }
     };
-    const taskEditMapper = TaskEdit.createMapper(entry);
 
+    const taskEditMapper = TaskEdit.createMapper(entry);
     for (const pair of formData.entries()) {
       const [property, value] = pair;
       if (taskEditMapper[property]) {
@@ -51,6 +54,7 @@ class TaskEdit extends Component {
   _isRepeated() {
     return Object.values(this._repeatingDays).some((it) => it === true);
   }
+
   _onChangeDate() {
     this.state.isDate = !this.state.isDate;
     this.unbind();
@@ -74,6 +78,7 @@ class TaskEdit extends Component {
       this._onSubmit(newData);
     }
     this.update(newData);
+    this.state.isDate = false;
   }
 
   set onSubmit(fn) {
@@ -81,7 +86,12 @@ class TaskEdit extends Component {
   }
 
   _partialUpdate() {
-    this._element.innerHTML = this.template;
+    const parentDomElement = document.querySelector(`.board__tasks`);
+    const previousElement = this._element;
+
+    this._element = createElement(this.template);
+    parentDomElement.replaceChild(this._element, previousElement);
+    previousElement.remove();
   }
 
   get template() {
@@ -116,11 +126,11 @@ class TaskEdit extends Component {
 
                 <fieldset class="card__date-deadline" ${!this.state.isDate && `disabled`}>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date flatpickr flatpickr-input" type="text" placeholder="23 September" name="date"/>
+                    <input class="card__date" type="text" placeholder="${this._dueDate}" name="date"/>
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time flatpickr flatpickr-input" type="text" placeholder="11:15 PM" name="time"/>
+                    <input class="card__time" type="text" placeholder="${this._time}" name="time"/>
                   </label>
                 </fieldset>
 
@@ -222,14 +232,12 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
 
     if (this.state.isDate) {
-      flatpickr(this._element.querySelector(`.card__date`), {altInput: true, altFormat: `j F`, dateFormat: `j F`});
-      flatpickr(this._element.querySelector(`.card__time`), {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
+      flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
+      flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
     }
   }
 
   unbind() {
-    this._element.querySelector(`.card__form`)
-      .removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__form`)
       .removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__date-deadline-toggle`)
@@ -244,6 +252,7 @@ class TaskEdit extends Component {
     this._color = data.color;
     this._repeatingDays = data.repeatingDays;
     this._dueDate = data.dueDate;
+    this._time = data._time;
   }
 
   static createMapper(target) {
@@ -258,7 +267,12 @@ class TaskEdit extends Component {
       repeat: (value) => {
         target.repeatingDays[value] = true;
       },
-      date: (value) => target.dueDate[value],
+      date: (value) => {
+        target.dueDate = value;
+      },
+      time: (value) => {
+        target.time = value;
+      }
     };
   }
 

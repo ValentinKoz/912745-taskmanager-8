@@ -2,7 +2,8 @@ import {getDateAndTime, getRandomTags} from './info.js';
 
 const currentData = (data) => ({
   title: data.title[Math.floor(Math.random() * 3)],
-  dueDate: getDateAndTime(data.dueDate),
+  dueDate: getDateAndTime(data.dueDate)[0],
+  time: getDateAndTime(data.dueDate)[1],
   tags: getRandomTags(data.tags),
   picture: data.picture + `${Math.random()}`,
   color: data.color[Math.floor(Math.random() * 5)],
