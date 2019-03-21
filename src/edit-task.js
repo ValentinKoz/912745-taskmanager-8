@@ -10,7 +10,6 @@ class TaskEdit extends Component {
     this._dueDate = data.dueDate;
     this._tags = data.tags;
     this._color = data.color;
-    this._time = data.time;
 
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     this._onSubmit = null;
@@ -19,8 +18,11 @@ class TaskEdit extends Component {
       isDate: false,
       isRepeated: false,
     };
+
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeRepeated = this._onChangeRepeated.bind(this);
+    this._changeDataInput = this._changeDataInput.bind(this);
+    // this._changeTimeInput = this._changeTimeInput.bind(this);
   }
 
   _processForm(formData) {
@@ -29,7 +31,6 @@ class TaskEdit extends Component {
       color: ``,
       tags: [],
       dueDate: this._dueDate,
-      time: ``,
       repeatingDays: {
         'mo': false,
         'tu': false,
@@ -38,7 +39,7 @@ class TaskEdit extends Component {
         'fr': false,
         'sa': false,
         'su': false,
-      }
+      },
     };
 
     const taskEditMapper = TaskEdit.createMapper(entry);
@@ -53,6 +54,20 @@ class TaskEdit extends Component {
 
   _isRepeated() {
     return Object.values(this._repeatingDays).some((it) => it === true);
+  }
+  // _changeTimeInput() {
+  //
+  //   this.unbind();
+  //   this._partialUpdate();
+  //   this.bind();
+  // }
+
+  _changeDataInput() {
+    const value = this._element.querySelector(`.card__date`).value;
+    this._dueDate = this._dueDate.date(value.split(` `)[0]).month(value.split(` `)[1]);
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
   }
 
   _onChangeDate() {
@@ -126,11 +141,11 @@ class TaskEdit extends Component {
 
                 <fieldset class="card__date-deadline" ${!this.state.isDate && `disabled`}>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date" type="text" placeholder="${this._dueDate}" name="date"/>
+                    <input class="card__date" type="text" placeholder="${this._dueDate.format(`D MMMM`)}" name="date"/>
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" placeholder="${this._time}" name="time"/>
+                    <input class="card__time" type="text" placeholder="${this._dueDate.format(`HH:mm A`)}" name="time"/>
                   </label>
                 </fieldset>
 
@@ -230,10 +245,14 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeDate);
     this._element.querySelector(`.card__repeat-toggle`)
     .addEventListener(`click`, this._onChangeRepeated);
+    this._element.querySelector(`.card__date`)
+    .addEventListener(`change`, this._changeDataInput);
+    // this._element.querySelector(`.card__time`)
+    // .addEventListener(`click`, this._changeTimeInput);
 
     if (this.state.isDate) {
-      flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
-      flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
+      flatpickr(this._element.querySelector(`.card__date`), {altInput: true, altFormat: `j F`, dateFormat: `j F`});
+      flatpickr(this._element.querySelector(`.card__time`), {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i K`, dateFormat: `h:i K`});
     }
   }
 
@@ -244,6 +263,10 @@ class TaskEdit extends Component {
       .removeEventListener(`click`, this._onChangeDate);
     this._element.querySelector(`.card__repeat-toggle`)
       .removeEventListener(`click`, this._onChangeRepeated);
+    // this._element.querySelector(`.card__date`)
+    // .removeEventListener('click', this._changeDataInput);
+    // this._element.querySelector(`.card__time`)
+    // .removeEventListener(`click`, this._changeTimeInput);
   }
 
   update(data) {
@@ -252,7 +275,6 @@ class TaskEdit extends Component {
     this._color = data.color;
     this._repeatingDays = data.repeatingDays;
     this._dueDate = data.dueDate;
-    this._time = data._time;
   }
 
   static createMapper(target) {
@@ -267,11 +289,20 @@ class TaskEdit extends Component {
       repeat: (value) => {
         target.repeatingDays[value] = true;
       },
-      date: (value) => {
-        target.dueDate = value;
-      },
       time: (value) => {
-        target.time = value;
+
+        const dateString = value.split(` `);
+        let hours = dateString[0].split(`:`)[0];
+        let minutes = dateString[0].split(`:`)[1];
+
+        if (dateString[1] === `PM`) {
+          hours = +hours + 12;
+        }
+
+        target.dueDate.hour(hours).minute(minutes);
+      },
+      date: (value) => {
+        target.dueDate.date(value.split(` `)[0]).month(value.split(` `)[1]);
       }
     };
   }

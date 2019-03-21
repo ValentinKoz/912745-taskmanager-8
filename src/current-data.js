@@ -1,12 +1,11 @@
-import {getDateAndTime, getRandomTags} from './info.js';
+import {getRandomTags, rand, createRandomDate} from './info.js';
 
 const currentData = (data) => ({
-  title: data.title[Math.floor(Math.random() * 3)],
-  dueDate: getDateAndTime(data.dueDate)[0],
-  time: getDateAndTime(data.dueDate)[1],
+  title: data.title[rand(3, 0)],
+  dueDate: createRandomDate(data.dueDate),
   tags: getRandomTags(data.tags),
   picture: data.picture + `${Math.random()}`,
-  color: data.color[Math.floor(Math.random() * 5)],
+  color: data.color[rand(5, 0)],
   repeatingDays: data.repeatingDays,
 });
 

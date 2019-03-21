@@ -15,6 +15,12 @@ export const primaryTaskList = () => {
     createTask();
   }
 };
+export const createRandomDate = (date) => {
+  date.add(rand(), `days`);
+  date.subtract(rand(), `days`);
+  return date;
+};
+
 const taskContainer = document.querySelector(`.board__tasks`);
 
 export const createTask = () => {
@@ -36,7 +42,6 @@ export const createTask = () => {
     dataForTask.color = newObject.color;
     dataForTask.repeatingDays = newObject.repeatingDays;
     dataForTask.dueDate = newObject.dueDate;
-    dataForTask.time = newObject.time;
 
     componentTask.update(dataForTask);
     componentTask.render();
