@@ -30,5 +30,7 @@ class Component {
     this._element.remove();
     this._element = null;
   }
+
+  update() {}
 }
 export default Component;

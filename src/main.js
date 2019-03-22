@@ -10,7 +10,6 @@ for (const Filter of Filters) {
 }
 conteinerFilters = conteinerFilters.join(` `);
 mainFilter.insertAdjacentHTML(`beforeend`, conteinerFilters);
-
 primaryTaskList();
 
 mainFilter.addEventListener(`change`, function (evt) {

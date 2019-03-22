@@ -1,6 +1,7 @@
 import Task from './task.js';
 import data from './data.js';
 import TaskEdit from './edit-Task.js';
+import currentData from './current-data.js';
 
 export const TEST_DATA = 7;
 export const Filters = [`All`, `Overdue`, `Today`, `Favorites`, `Repeating`, `Tags`, `Archive`];
@@ -14,11 +15,19 @@ export const primaryTaskList = () => {
     createTask();
   }
 };
+export const createRandomDate = (date) => {
+  date.add(rand(), `days`);
+  date.subtract(rand(), `days`);
+  return date;
+};
+
+const taskContainer = document.querySelector(`.board__tasks`);
 
 export const createTask = () => {
-  const componentTask = new Task(data());
-  const editComponentTask = new TaskEdit(componentTask);
-  const taskContainer = document.querySelector(`.board__tasks`);
+
+  const dataForTask = currentData(data());
+  const componentTask = new Task(dataForTask);
+  const editComponentTask = new TaskEdit(dataForTask);
   taskContainer.appendChild(componentTask.render());
 
   componentTask.onEdit = () => {
@@ -27,17 +36,24 @@ export const createTask = () => {
     componentTask.unrender();
   };
 
-  editComponentTask.onSubmit = () => {
+  editComponentTask.onSubmit = (newObject) => {
+    dataForTask.title = newObject.title;
+    dataForTask.tags = newObject.tags;
+    dataForTask.color = newObject.color;
+    dataForTask.repeatingDays = newObject.repeatingDays;
+    dataForTask.dueDate = newObject.dueDate;
+
+    componentTask.update(dataForTask);
     componentTask.render();
     taskContainer.replaceChild(componentTask.element, editComponentTask.element);
     editComponentTask.unrender();
   };
 };
 
-export const getDateAndTime = (dateAndTime) => {
+export const getDateAndTime = (param) => {
+  const dateAndTime = param;
   const dateTime = dateAndTime.toString().split(` `);
   const date = dateTime[2] + ` ` + dateTime[1];
-
   let getHour = dateAndTime.getHours();
   let getMinutes = dateAndTime.getMinutes();
   getMinutes = (getMinutes > 10) ? getMinutes : `0` + getMinutes;
@@ -47,22 +63,11 @@ export const getDateAndTime = (dateAndTime) => {
   return [date, time];
 };
 
-export const checkRepeatDays = (repeatingDays) => {
-  const repDays = [];
-  for (const day of repeatingDays) {
-    if (day[1]) {
-      repDays.push(day[0].toLowerCase());
-    }
-  }
-  return repDays;
-};
-
 export const getRandomTags = (tags) => {
   const qutyTegs = rand(4, 0);
-  const mas = [...tags];
-  while (mas.length !== qutyTegs) {
-    const index = rand(mas.length, 0);
-    mas.splice(index, 1);
+  while (tags.length !== qutyTegs) {
+    const index = rand(tags.length, 0);
+    tags.splice(index, 1);
   }
-  return mas;
+  return tags;
 };
