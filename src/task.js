@@ -72,7 +72,7 @@ class Task extends Component {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${this._dueDate.format(`D MMM`)}"
+                            value="${this._dueDate ? this._dueDate.format(`D MMM`) : ``}"
                           />
                         </label>
                         <label class="card__input-deadline-wrap">
@@ -81,7 +81,7 @@ class Task extends Component {
                             type="text"
                             placeholder=""
                             name="time"
-                            value="${this._dueDate.format(`hh:mm A`)}"
+                            value="${this._dueDate ? this._dueDate.format(`hh:mm A`) : ``}"
                           />
                         </label>
                       </fieldset>

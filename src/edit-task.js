@@ -1,6 +1,7 @@
 import Component from './component.js';
 import flatpickr from "flatpickr";
 import {createElement} from './create-element.js';
+import moment from 'moment';
 
 class TaskEdit extends Component {
   constructor(data) {
@@ -22,7 +23,8 @@ class TaskEdit extends Component {
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeRepeated = this._onChangeRepeated.bind(this);
     this._changeDataInput = this._changeDataInput.bind(this);
-    // this._changeTimeInput = this._changeTimeInput.bind(this);
+    this._changeTimeInput = this._changeTimeInput.bind(this);
+    this._changeRepeatedLabel = this._changeRepeatedLabel.bind(this);
   }
 
   _processForm(formData) {
@@ -30,7 +32,7 @@ class TaskEdit extends Component {
       title: ``,
       color: ``,
       tags: [],
-      dueDate: this._dueDate,
+      dueDate: false,
       repeatingDays: {
         'mo': false,
         'tu': false,
@@ -55,16 +57,40 @@ class TaskEdit extends Component {
   _isRepeated() {
     return Object.values(this._repeatingDays).some((it) => it === true);
   }
-  // _changeTimeInput() {
-  //
-  //   this.unbind();
-  //   this._partialUpdate();
-  //   this.bind();
-  // }
+
+  _changeTimeInput() {
+    if (!this._dueDate) {
+      this._dueDate = moment();
+    }
+    const value = this._element.querySelector(`.card__time`).value;
+    const timeString = value.split(` `);
+    let hours = timeString[0].split(`:`)[0];
+    let minutes = timeString[0].split(`:`)[1];
+
+    if (timeString[1] === `PM`) {
+      hours = +hours + 12;
+    }
+    this._dueDate.hour(hours).minute(minutes);
+
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
 
   _changeDataInput() {
+    if (!this._dueDate) {
+      this._dueDate = moment();
+    }
     const value = this._element.querySelector(`.card__date`).value;
-    this._dueDate = this._dueDate.date(value.split(` `)[0]).month(value.split(` `)[1]);
+    const [date, month] = value.split(` `);
+    this._dueDate = this._dueDate.date(date).month(month);
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
+  _changeRepeatedLabel(evt) {
+    this._repeatingDays[evt.target.value] = true;
     this.unbind();
     this._partialUpdate();
     this.bind();
@@ -93,7 +119,9 @@ class TaskEdit extends Component {
       this._onSubmit(newData);
     }
     this.update(newData);
+
     this.state.isDate = false;
+    this.state.isRepeated = false;
   }
 
   set onSubmit(fn) {
@@ -141,11 +169,11 @@ class TaskEdit extends Component {
 
                 <fieldset class="card__date-deadline" ${!this.state.isDate && `disabled`}>
                   <label class="card__input-deadline-wrap">
-                    <input class="card__date" type="text" placeholder="${this._dueDate.format(`D MMMM`)}" name="date"/>
+                    <input class="card__date" type="text" value="${this._dueDate ? this._dueDate.format(`D MMMM`) : ``}" placeholder="23 September" name="date"/>
                   </label>
 
                   <label class="card__input-deadline-wrap">
-                    <input class="card__time" type="text" placeholder="${this._dueDate.format(`HH:mm A`)}" name="time"/>
+                    <input class="card__time" type="text" value="${this._dueDate ? this._dueDate.format(`HH:mm A`) : ``}" placeholder="10:00 АМ" name="time"/>
                   </label>
                 </fieldset>
 
@@ -247,8 +275,10 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__date`)
     .addEventListener(`change`, this._changeDataInput);
-    // this._element.querySelector(`.card__time`)
-    // .addEventListener(`click`, this._changeTimeInput);
+    this._element.querySelector(`.card__time`)
+    .addEventListener(`change`, this._changeTimeInput);
+    this._element.querySelector(`.card__repeat-days-inner`)
+    .addEventListener(`change`, this._changeRepeatedLabel);
 
     if (this.state.isDate) {
       flatpickr(this._element.querySelector(`.card__date`), {altInput: true, altFormat: `j F`, dateFormat: `j F`});
@@ -263,10 +293,12 @@ class TaskEdit extends Component {
       .removeEventListener(`click`, this._onChangeDate);
     this._element.querySelector(`.card__repeat-toggle`)
       .removeEventListener(`click`, this._onChangeRepeated);
-    // this._element.querySelector(`.card__date`)
-    // .removeEventListener('click', this._changeDataInput);
-    // this._element.querySelector(`.card__time`)
-    // .removeEventListener(`click`, this._changeTimeInput);
+    this._element.querySelector(`.card__date`)
+    .removeEventListener(`change`, this._changeDataInput);
+    this._element.querySelector(`.card__time`)
+    .removeEventListener(`change`, this._changeTimeInput);
+    this._element.querySelector(`.card__repeat-days-inner`)
+    .removeEventListener(`change`, this._changeRepeatedLabel);
   }
 
   update(data) {
@@ -290,10 +322,11 @@ class TaskEdit extends Component {
         target.repeatingDays[value] = true;
       },
       time: (value) => {
-
+        if (!target.dueDate) {
+          target.dueDate = moment();
+        }
         const dateString = value.split(` `);
-        let hours = dateString[0].split(`:`)[0];
-        let minutes = dateString[0].split(`:`)[1];
+        let [hours, minutes] = dateString[0].split(`:`);
 
         if (dateString[1] === `PM`) {
           hours = +hours + 12;
@@ -302,6 +335,9 @@ class TaskEdit extends Component {
         target.dueDate.hour(hours).minute(minutes);
       },
       date: (value) => {
+        if (!target.dueDate) {
+          target.dueDate = moment();
+        }
         target.dueDate.date(value.split(` `)[0]).month(value.split(` `)[1]);
       }
     };
