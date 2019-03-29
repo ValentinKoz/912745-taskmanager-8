@@ -13,7 +13,9 @@ class TaskEdit extends Component {
     this._color = data.color;
 
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onSubmit = null;
+    this._onDelete = null;
 
     this.state = {
       isDate: false,
@@ -25,6 +27,10 @@ class TaskEdit extends Component {
     this._changeDataInput = this._changeDataInput.bind(this);
     this._changeTimeInput = this._changeTimeInput.bind(this);
     this._changeRepeatedLabel = this._changeRepeatedLabel.bind(this);
+    this._changeText = this._changeText.bind(this);
+    this._changeColor = this._changeColor.bind(this);
+    this._deleteTags = this._deleteTags.bind(this);
+    this._addTags = this._addTags.bind(this);
   }
 
   _processForm(formData) {
@@ -77,6 +83,29 @@ class TaskEdit extends Component {
     this.bind();
   }
 
+  _deleteTags(evt) {
+    if (evt.target.classList.value === `card__hashtag-delete`) {
+      const parentNode = evt.target.parentNode;
+      const inputValue = parentNode.querySelector(`input`).value;
+      const index = this._tags.indexOf(inputValue);
+      this._tags.splice(index, 1);
+      this.unbind();
+      this._partialUpdate();
+      this.bind();
+    }
+  }
+
+  _addTags(evt) {
+    this._tags.push(evt.target.value);
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
+  _changeText() {
+    this._title = this._element.querySelector(`.card__text`).value;
+  }
+
   _changeDataInput() {
     if (!this._dueDate) {
       this._dueDate = moment();
@@ -90,10 +119,13 @@ class TaskEdit extends Component {
   }
 
   _changeRepeatedLabel(evt) {
-    this._repeatingDays[evt.target.value] = true;
+    this._repeatingDays[evt.target.value] = !this._repeatingDays[evt.target.value];
     this.unbind();
     this._partialUpdate();
     this.bind();
+  }
+  _changeColor(evt) {
+    this._color = evt.target.value;
   }
 
   _onChangeDate() {
@@ -126,6 +158,16 @@ class TaskEdit extends Component {
 
   set onSubmit(fn) {
     this._onSubmit = fn;
+  }
+
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+
+  _onDeleteButtonClick() {
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
   }
 
   _partialUpdate() {
@@ -279,6 +321,16 @@ class TaskEdit extends Component {
     .addEventListener(`change`, this._changeTimeInput);
     this._element.querySelector(`.card__repeat-days-inner`)
     .addEventListener(`change`, this._changeRepeatedLabel);
+    this._element.querySelector(`.card__delete`)
+    .addEventListener(`click`, this._onDeleteButtonClick);
+    this._element.querySelector(`.card__text`)
+    .addEventListener(`change`, this._changeText);
+    this._element.querySelector(`.card__colors-wrap`)
+    .addEventListener(`change`, this._changeColor);
+    this._element.querySelector(`.card__hashtag`)
+    .addEventListener(`click`, this._deleteTags);
+    this._element.querySelector(`.card__hashtag-input`)
+    .addEventListener(`change`, this._addTags);
 
     if (this.state.isDate) {
       flatpickr(this._element.querySelector(`.card__date`), {altInput: true, altFormat: `j F`, dateFormat: `j F`});
@@ -299,6 +351,16 @@ class TaskEdit extends Component {
     .removeEventListener(`change`, this._changeTimeInput);
     this._element.querySelector(`.card__repeat-days-inner`)
     .removeEventListener(`change`, this._changeRepeatedLabel);
+    this._element.querySelector(`.card__delete`)
+    .removeEventListener(`click`, this._onDeleteButtonClick);
+    this._element.querySelector(`.card__text`)
+    .removeEventListener(`change`, this._changeText);
+    this._element.querySelector(`.card__colors-wrap`)
+    .removeEventListener(`change`, this._changeColor);
+    this._element.querySelector(`.card__hashtag`)
+    .removeEventListener(`click`, this._deleteTags);
+    this._element.querySelector(`.card__hashtag-input`)
+    .removeEventListener(`change`, this._addTags);
   }
 
   update(data) {
