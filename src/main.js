@@ -82,10 +82,10 @@ const initialFilter = getFilterData(Filters);
 renderFilter(initialFilter, Filter, filterTasks, renderTasks, tasksContainer, massivTasks);
 
 controlStatistic.addEventListener(`click`, () => {
-  chartConteiner(massivTasks);
+  api.getTasks().then((tasks) => {chartConteiner(tasks)})
 });
 statisticPeriod.addEventListener(`change`, () => {
-  buildChart(massivTasks);
+    api.getTasks().then((tasks) => {buildChart(tasks)})
 });
 
 controlTasks.addEventListener(`click`, () => {

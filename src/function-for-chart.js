@@ -18,6 +18,7 @@ export const filterTags = (tasks, timeAfter, timeBefore) => {
   const backgroundColor = [];
 
   for (let i = 0; i < tasks.length; i++) {
+    console.log(tasks[i].dueDate);
     if (tasks[i].dueDate && tasks[i].dueDate.isBetween(timeAfter, timeBefore)) {
       const mas = [...tasks[i].tags];
       mas.forEach((a) => {
