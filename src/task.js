@@ -3,6 +3,7 @@ import Component from './component.js';
 class Task extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._title = data.title;
     this._dueDate = data.dueDate;
     this._tags = data.tags;
@@ -88,7 +89,7 @@ class Task extends Component {
                     </div>
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-                      ${this._tags.map((tag) => (`
+                      ${Array.from(this._tags).map((tag) => (`
                         <span class="card__hashtag-inner">
                           <input
                             type="hidden"

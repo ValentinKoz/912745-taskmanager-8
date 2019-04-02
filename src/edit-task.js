@@ -6,6 +6,7 @@ import moment from 'moment';
 class TaskEdit extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._repeatingDays = data.repeatingDays;
     this._title = data.title;
     this._dueDate = data.dueDate;
@@ -72,7 +73,6 @@ class TaskEdit extends Component {
     const timeString = value.split(` `);
     let hours = timeString[0].split(`:`)[0];
     let minutes = timeString[0].split(`:`)[1];
-
     if (timeString[1] === `PM`) {
       hours = +hours + 12;
     }
@@ -160,13 +160,13 @@ class TaskEdit extends Component {
     this._onSubmit = fn;
   }
 
-  set onDelete(fn) {
+  setOnDelete(fn) {
     this._onDelete = fn;
   }
 
   _onDeleteButtonClick() {
     if (typeof this._onDelete === `function`) {
-      this._onDelete();
+      this._onDelete({id: this._id});
     }
   }
 
@@ -251,7 +251,7 @@ class TaskEdit extends Component {
 
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
-                ${this._tags.map((tag) => (`
+                ${Array.from(this._tags).map((tag) => (`
                   <span class="card__hashtag-inner">
                     <input
                       type="hidden"
@@ -318,7 +318,7 @@ class TaskEdit extends Component {
     this._element.querySelector(`.card__date`)
     .addEventListener(`change`, this._changeDataInput);
     this._element.querySelector(`.card__time`)
-    .addEventListener(`change`, this._changeTimeInput);
+    .addEventListener(`click`, this._changeTimeInput);
     this._element.querySelector(`.card__repeat-days-inner`)
     .addEventListener(`change`, this._changeRepeatedLabel);
     this._element.querySelector(`.card__delete`)
@@ -348,7 +348,7 @@ class TaskEdit extends Component {
     this._element.querySelector(`.card__date`)
     .removeEventListener(`change`, this._changeDataInput);
     this._element.querySelector(`.card__time`)
-    .removeEventListener(`change`, this._changeTimeInput);
+    .removeEventListener(`click`, this._changeTimeInput);
     this._element.querySelector(`.card__repeat-days-inner`)
     .removeEventListener(`change`, this._changeRepeatedLabel);
     this._element.querySelector(`.card__delete`)
@@ -369,6 +369,21 @@ class TaskEdit extends Component {
     this._color = data.color;
     this._repeatingDays = data.repeatingDays;
     this._dueDate = data.dueDate;
+  }
+
+  shake(text) {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    this._element.querySelector(`.card__inner`).style.border = `2px solid red`;
+    setTimeout(() => {
+      if (text === `SAVE`) {
+        this._element.querySelector(`.card__save`).innerHTML = `${text}`;
+      } else {
+        this._element.querySelector(`.card__delete`).innerHTML = `${text}`;
+      }
+      this._element.querySelector(`.card__inner`).style.border = ``;
+      this._element.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
   }
 
   static createMapper(target) {
