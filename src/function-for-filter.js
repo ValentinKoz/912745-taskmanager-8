@@ -1,10 +1,13 @@
 import moment from 'moment';
 import {rand} from './info.js';
 
-export const renderFilter = (filters, Filter, filterTasks, renderTasks, tasksContainer, initialTasks) => {
+export const renderFilter = (filters, Filter, filterTasks, renderTasks, tasksContainer, api) => {
   const mainFilter = document.querySelector(`.main__filter`);
   mainFilter.innerHTML = ``;
-
+  const initialTasks = [];
+  api.getTasks().then((tasks) => {
+    tasks.map((it) => initialTasks.push(it));
+  });
   for (let i = 0; i < filters.length; i++) {
     const filter = filters[i];
     const filterComponent = new Filter(filter);

@@ -18,7 +18,6 @@ export const filterTags = (tasks, timeAfter, timeBefore) => {
   const backgroundColor = [];
 
   for (let i = 0; i < tasks.length; i++) {
-    console.log(tasks[i].dueDate);
     if (tasks[i].dueDate && tasks[i].dueDate.isBetween(timeAfter, timeBefore)) {
       const mas = [...tasks[i].tags];
       mas.forEach((a) => {
@@ -47,7 +46,7 @@ export const filterColors = (tasks, timeAfter, timeBefore) => {
   const color = [];
 
   for (let i = 0; i < tasks.length; i++) {
-    if (tasks[i].dueDate.isBetween(timeAfter, timeBefore)) {
+    if (tasks[i].dueDate && tasks[i].dueDate.isBetween(timeAfter, timeBefore)) {
       const elem = tasks[i].color;
       if (massivTags[elem]) {
         massivTags[elem] += 1;

@@ -73,19 +73,18 @@ api.getTasks()
     renderTasks(tasks);
   }).catch(errorLoad);
 
-const massivTasks = [];
-api.getTasks().then((tasks) => {
-  tasks.map((task) => massivTasks.push(task));
-});
-
 const initialFilter = getFilterData(Filters);
-renderFilter(initialFilter, Filter, filterTasks, renderTasks, tasksContainer, massivTasks);
+renderFilter(initialFilter, Filter, filterTasks, renderTasks, tasksContainer, api);
 
 controlStatistic.addEventListener(`click`, () => {
-  api.getTasks().then((tasks) => {chartConteiner(tasks)})
+  api.getTasks().then((tasks) => {
+    chartConteiner(tasks);
+  });
 });
 statisticPeriod.addEventListener(`change`, () => {
-    api.getTasks().then((tasks) => {buildChart(tasks)})
+  api.getTasks().then((tasks) => {
+    buildChart(tasks);
+  });
 });
 
 controlTasks.addEventListener(`click`, () => {
